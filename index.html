@@ -1,0 +1,537 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GREEN NOW CRM</title>
+<style>
+:root {
+  --green:#205841;
+  --dark:#121715;
+  --gold:#cba458;
+  --bg:#f5f5f2;
+  --border:#e2e6e1;
+}
+* {box-sizing:border-box}
+body {margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#17241e}
+button,input,select,textarea {font:inherit}
+button {cursor:pointer}
+header {
+  background:var(--dark);color:white;padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;flex-wrap:wrap
+}
+.logo {font-weight:800;font-size:21px;color:#a9ddbc}
+nav {display:flex;gap:7px;flex-wrap:wrap}
+nav button {
+  border:0;background:transparent;color:white;
+  padding:11px;border-radius:7px
+}
+nav button.active,nav button:hover {background:var(--gold);color:#111}
+main {max-width:1250px;margin:30px auto;padding:0 18px}
+h1 {font-size:25px;margin-bottom:5px}
+h2 {font-size:18px;margin:0 0 16px}
+p {color:#65746b}
+.card {
+  background:white;border:1px solid var(--border);
+  border-radius:13px;padding:22px;margin-bottom:16px;
+  box-shadow:0 2px 5px #00000008
+}
+.grid {display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.grid3 {display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+label {display:block;font-size:13px;font-weight:bold;margin:12px 0 6px}
+input,select,textarea {
+  width:100%;border:1px solid #d3dbd4;border-radius:8px;
+  padding:11px;background:white
+}
+.btn {
+  border:0;background:var(--green);color:white;
+  padding:11px 17px;border-radius:8px;font-weight:bold
+}
+.btn:hover {filter:brightness(1.12)}
+.btn.gold {background:var(--gold);color:#111}
+.btn.light {background:#e8eee9;color:var(--green)}
+.btn.red {background:#a43b3b}
+.actions {display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+table {width:100%;border-collapse:collapse;font-size:13px}
+th,td {padding:13px;text-align:left;border-bottom:1px solid var(--border)}
+th {background:#f5f6f3}
+.tablewrap {overflow-x:auto}
+.stat {font-size:26px;font-weight:800;color:var(--green)}
+.small {font-size:12px;color:#78877d}
+.badge {background:#e4f3e8;color:#17643b;border-radius:20px;padding:5px 9px;font-size:12px}
+.hidden {display:none!important}
+.login {
+  max-width:420px;margin:90px auto;background:white;
+  padding:35px;border-radius:18px;box-shadow:0 10px 35px #0001
+}
+.login h1 {text-align:center;color:var(--green)}
+.notice {background:#fff4d9;padding:12px;border-radius:8px;font-size:12px;margin-top:16px}
+.message {padding:10px;background:#e8f4ec;border-radius:8px;margin:10px 0}
+@media(max-width:700px){
+ .grid,.grid3 {grid-template-columns:1fr}
+ header {padding:12px}
+ nav {overflow:auto}
+ .card {padding:15px}
+}
+</style>
+</head>
+<body>
+
+<div id="loginPage" class="login">
+  <h1>GREEN NOW CRM</h1>
+  <p style="text-align:center">Panel zarządzania OZE</p>
+  <label>Login</label>
+  <input id="login" placeholder="Wpisz login">
+  <label>Hasło</label>
+  <input id="password" type="password" placeholder="Wpisz hasło">
+  <div class="actions">
+    <button class="btn" style="width:100%" onclick="signIn()">Zaloguj się</button>
+  </div>
+  <p id="loginError" style="color:#b33"></p>
+  <div class="notice">
+    KONTA TESTOWE<br>
+    Administrator: admin / DemoAdmin123!<br>
+    PH: ph / DemoPH123!<br>
+    Biuro: biuro / DemoBiuro123!<br><br>
+    Wyłącznie demonstracja. Nie używaj prawdziwych danych.
+  </div>
+</div>
+
+<div id="app" class="hidden">
+<header>
+  <div class="logo">◈ GREEN NOW CRM</div>
+  <nav id="navigation"></nav>
+  <div>
+    <span id="loggedUser"></span>
+    <button class="btn light" onclick="logout()">Wyloguj</button>
+  </div>
+</header>
+<main id="content"></main>
+</div>
+
+<script>
+const KEY="greennow_crm_demo_v1";
+
+const defaults={
+ users:[
+  {id:1,name:"Administrator",login:"admin",password:"DemoAdmin123!",role:"admin",active:true},
+  {id:2,name:"Przedstawiciel handlowy",login:"ph",password:"DemoPH123!",role:"ph",active:true},
+  {id:3,name:"Pracownik biura",login:"biuro",password:"DemoBiuro123!",role:"office",active:true}
+ ],
+ offers:[],
+ clients:[],
+ materials:[],
+ tasks:[]
+};
+
+let db;
+try {
+ db=JSON.parse(localStorage.getItem(KEY))||defaults;
+} catch(e) {db=defaults}
+let current=null;
+let page="dashboard";
+
+function save(){
+ localStorage.setItem(KEY,JSON.stringify(db));
+}
+function money(n){
+ return Number(n||0).toLocaleString("pl-PL",{
+  style:"currency",currency:"PLN"
+ });
+}
+function esc(v){
+ return String(v??"").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",
+  '"':"&quot;","'":"&#39;"
+ })[c]);
+}
+function byId(id){return document.getElementById(id)}
+function val(id){return byId(id)?.value||""}
+function uid(){return Date.now()+Math.floor(Math.random()*10000)}
+function isAdmin(){return current?.role==="admin"}
+function isOffice(){return current?.role==="office"}
+function canManage(){return isAdmin()||isOffice()}
+function own(items){
+ return isAdmin()||isOffice()
+ ?items:items.filter(x=>x.owner===current.id);
+}
+function roleName(r){
+ return ({admin:"Administrator",office:"Biuro",ph:"PH"})[r]||r;
+}
+function button(text,action,style=""){
+ return `<button class="btn ${style}" onclick="${action}">${text}</button>`;
+}
+function signIn(){
+ const u=db.users.find(x=>x.login===val("login")&&
+ x.password===val("password")&&x.active);
+ if(!u){
+  byId("loginError").textContent="Nieprawidłowy login lub hasło.";
+  return;
+ }
+ current=u;
+ byId("loginPage").classList.add("hidden");
+ byId("app").classList.remove("hidden");
+ page="dashboard";
+ render();
+}
+function logout(){
+ current=null;
+ byId("app").classList.add("hidden");
+ byId("loginPage").classList.remove("hidden");
+ byId("password").value="";
+}
+function go(p){page=p;render()}
+function render(){
+ if(!current)return;
+ byId("loggedUser").textContent=current.name+" • "+roleName(current.role);
+ let menus=[
+  ["dashboard","Start"],
+  ["calculator","Kalkulator"],
+  ["offers","Oferty"],
+  ["clients","Klienci"],
+  ["commissions","Prowizje"],
+  ["materials","Materiały"],
+  ["tasks","Zadania"]
+ ];
+ if(canManage())menus.push(["approvals","Weryfikacja"]);
+ if(isAdmin())menus.push(["users","Użytkownicy"]);
+ byId("navigation").innerHTML=menus.map(([id,name])=>
+ `<button class="${page===id?"active":""}" onclick="go('${id}')">${name}</button>`
+ ).join("");
+ const views={
+  dashboard:dashboard,
+  calculator:calculator,
+  offers:offers,
+  clients:clients,
+  commissions:commissions,
+  materials:materials,
+  tasks:tasks,
+  approvals:approvals,
+  users:users
+ };
+ byId("content").innerHTML=(views[page]||dashboard)();
+ if(page==="calculator")calculate();
+}
+
+function dashboard(){
+ const o=own(db.offers);
+ const c=own(db.clients);
+ return `<h1>Strona główna</h1>
+ <p>Witaj, ${esc(current.name)}. Twój panel GREEN NOW.</p>
+ <div class="grid3">
+  <div class="card"><div class="small">Oferty</div><div class="stat">${o.length}</div></div>
+  <div class="card"><div class="small">Klienci</div><div class="stat">${c.length}</div></div>
+  <div class="card"><div class="small">Do zatwierdzenia</div><div class="stat">${o.filter(x=>x.status==="Do weryfikacji").length}</div></div>
+ </div>
+ <div class="card">
+  <h2>Szybkie działania</h2>
+  <div class="actions">
+   ${button("Nowa wycena","go('calculator')")}
+   ${button("Klienci","go('clients')","light")}
+   ${button("Moje oferty","go('offers')","light")}
+  </div>
+ </div>`;
+}
+
+function calculator(){
+ return `<h1>Kalkulator OZE</h1>
+ <p>Cena 0 + procentowy narzut PH = cena klienta.</p>
+ <div class="grid">
+ <div class="card">
+  <h2>Konfiguracja oferty</h2>
+  <label>Imię i nazwisko klienta</label>
+  <input id="calcClient" placeholder="Jan Kowalski">
+  <label>Rodzaj instalacji</label>
+  <select id="calcType">
+   <option>Fotowoltaika</option>
+   <option>Magazyn energii</option>
+   <option>Fotowoltaika + magazyn</option>
+   <option>Pompa ciepła</option>
+   <option>Rozbudowa instalacji</option>
+  </select>
+  <label>Cena 0 — bazowa netto (zł)</label>
+  <input id="calcBase" type="number" value="25000" min="0" oninput="calculate()">
+  <label>Marża PH — procent narzutu (%)</label>
+  <input id="calcMargin" type="number" value="15" min="0" max="100" step="0.5" oninput="calculate()">
+  <label>Stawka VAT</label>
+  <select id="calcVat" onchange="calculate()">
+   <option value="8">8%</option>
+   <option value="23">23%</option>
+  </select>
+  <label>Uwagi</label>
+  <textarea id="calcNotes" rows="3"></textarea>
+ </div>
+ <div class="card">
+  <h2>Podsumowanie wyceny</h2>
+  <p>Cena bazowa netto</p><div id="resultBase" class="stat"></div>
+  <hr>
+  <p>Marża handlowa netto</p><div id="resultMargin" class="stat"></div>
+  <hr>
+  <p>Cena klienta netto</p><div id="resultNet" class="stat"></div>
+  <hr>
+  <p>Cena klienta brutto</p><div id="resultGross" class="stat"></div>
+  <div class="notice">
+   Marża handlowa nie oznacza automatycznie prowizji do wypłaty.
+   Prowizję zatwierdza administrator.
+  </div>
+  <div class="actions">
+   ${button("Zapisz ofertę","saveOffer()")}
+  </div>
+ </div></div>`;
+}
+function calculate(){
+ const base=Math.max(0,Number(val("calcBase"))||0);
+ const pct=Math.max(0,Number(val("calcMargin"))||0);
+ const vat=Number(val("calcVat"))||8;
+ const margin=base*pct/100;
+ const net=base+margin;
+ byId("resultBase").textContent=money(base);
+ byId("resultMargin").textContent=money(margin);
+ byId("resultNet").textContent=money(net);
+ byId("resultGross").textContent=money(net*(1+vat/100));
+}
+function saveOffer(){
+ const client=val("calcClient").trim();
+ if(!client){alert("Wpisz imię i nazwisko klienta.");return}
+ const base=Math.max(0,Number(val("calcBase"))||0);
+ const pct=Math.max(0,Number(val("calcMargin"))||0);
+ const vat=Number(val("calcVat"));
+ const margin=base*pct/100;
+ const net=base+margin;
+ const id=uid();
+ db.offers.push({
+  id,client,owner:current.id,
+  type:val("calcType"),base,pct,margin,net,vat,
+  gross:net*(1+vat/100),
+  notes:val("calcNotes"),status:"Robocza",
+  commission:0,commissionStatus:"Nieustalona",
+  date:new Date().toLocaleDateString("pl-PL")
+ });
+ db.clients.push({
+  id:uid(),name:client,owner:current.id,
+  type:val("calcType"),status:"Oferta",
+  notes:"",offerId:id
+ });
+ save();go("offers");
+}
+function offers(){
+ const rows=own(db.offers);
+ return `<h1>Historia ofert</h1>
+ <p>Wyceny zapisane w systemie.</p>
+ <div class="card tablewrap">
+ <table><thead><tr>
+ <th>Klient</th><th>Instalacja</th><th>Cena netto</th>
+ <th>Marża netto</th><th>Status</th><th>Akcje</th>
+ </tr></thead><tbody>
+ ${rows.map(o=>`<tr>
+ <td>${esc(o.client)}</td>
+ <td>${esc(o.type)}</td>
+ <td>${money(o.net)}</td>
+ <td>${money(o.margin)}</td>
+ <td><span class="badge">${esc(o.status)}</span></td>
+ <td>${o.status==="Robocza"?
+ button("Przekaż do biura",`sendOffer(${o.id})`):"—"}</td>
+ </tr>`).join("")||'<tr><td colspan="6">Brak ofert.</td></tr>'}
+ </tbody></table></div>`;
+}
+function sendOffer(id){
+ const o=db.offers.find(x=>x.id===id);
+ if(!o||(!canManage()&&o.owner!==current.id))return;
+ o.status="Do weryfikacji";save();render();
+}
+function approvals(){
+ if(!canManage())return "<h1>Brak dostępu</h1>";
+ const rows=db.offers.filter(x=>x.status==="Do weryfikacji");
+ return `<h1>Skrzynka umów i ofert</h1>
+ <p>Oferty przekazane przez PH do weryfikacji.</p>
+ <div class="card tablewrap"><table>
+ <tr><th>Klient</th><th>PH</th><th>Wartość netto</th><th>Akcje</th></tr>
+ ${rows.map(o=>`<tr>
+ <td>${esc(o.client)}</td>
+ <td>${esc(db.users.find(u=>u.id===o.owner)?.name)}</td>
+ <td>${money(o.net)}</td>
+ <td>
+ ${button("Zatwierdź",`approve(${o.id},true)`)}
+ ${button("Odrzuć",`approve(${o.id},false)`,"red")}
+ </td></tr>`).join("")||'<tr><td colspan="4">Brak ofert do weryfikacji.</td></tr>'}
+ </table></div>`;
+}
+function approve(id,accepted){
+ if(!canManage())return;
+ const o=db.offers.find(x=>x.id===id);
+ if(!o)return;
+ o.status=accepted?"Zaakceptowana":"Odrzucona";
+ save();render();
+}
+function clients(){
+ return `<h1>Klienci</h1>
+ <div class="card">
+ <h2>Dodaj klienta</h2>
+ <div class="grid">
+ <div><label>Imię i nazwisko</label><input id="newClient"></div>
+ <div><label>Zakres montażu</label><input id="newType"></div>
+ </div>
+ <label>Notatki</label><textarea id="newNotes"></textarea>
+ <div class="actions">${button("Dodaj klienta","addClient()")}</div>
+ </div>
+ <div class="card tablewrap"><table>
+ <tr><th>Klient</th><th>Zakres</th><th>Etap</th><th>PH</th></tr>
+ ${own(db.clients).map(c=>`<tr>
+ <td>${esc(c.name)}</td><td>${esc(c.type)}</td>
+ <td>${esc(c.status)}</td>
+ <td>${esc(db.users.find(u=>u.id===c.owner)?.name)}</td>
+ </tr>`).join("")||'<tr><td colspan="4">Brak klientów.</td></tr>'}
+ </table></div>`;
+}
+function addClient(){
+ const name=val("newClient").trim();
+ if(!name)return alert("Podaj imię i nazwisko.");
+ db.clients.push({
+  id:uid(),name,owner:current.id,
+  type:val("newType"),notes:val("newNotes"),status:"Nowy"
+ });
+ save();render();
+}
+function commissions(){
+ return `<h1>Prowizje i rozliczenia</h1>
+ <p>Marża handlowa i prowizja wypłacana to oddzielne wartości.</p>
+ <div class="card tablewrap"><table>
+ <tr><th>Klient</th><th>Marża netto</th><th>Prowizja PH</th>
+ <th>Status</th><th>Akcje</th></tr>
+ ${own(db.offers).map(o=>`<tr>
+ <td>${esc(o.client)}</td>
+ <td>${money(o.margin)}</td>
+ <td>${money(o.commission)}</td>
+ <td>${esc(o.commissionStatus)}</td>
+ <td>${isAdmin()?button("Ustal prowizję",`setCommission(${o.id})`):"—"}</td>
+ </tr>`).join("")||'<tr><td colspan="5">Brak rozliczeń.</td></tr>'}
+ </table></div>`;
+}
+function setCommission(id){
+ if(!isAdmin())return;
+ const o=db.offers.find(x=>x.id===id);
+ if(!o)return;
+ const amount=prompt("Kwota prowizji PH netto (zł):",o.commission);
+ if(amount===null)return;
+ const n=Number(amount.replace(",","."));
+ if(!Number.isFinite(n)||n<0)return alert("Nieprawidłowa kwota.");
+ o.commission=n;
+ const status=prompt(
+  "Status: Oczekująca / FV otrzymana / Wypłacona",
+  o.commissionStatus==="Nieustalona"?"Oczekująca":o.commissionStatus
+ );
+ if(status!==null&&["Oczekująca","FV otrzymana","Wypłacona"].includes(status)){
+  o.commissionStatus=status;
+ }
+ save();render();
+}
+function materials(){
+ return `<h1>Materiały do pobrania</h1>
+ ${isAdmin()?`<div class="card">
+ <h2>Dodaj materiał</h2>
+ <label>Nazwa dokumentu</label><input id="materialName">
+ <label>Link do dokumentu (HTTPS)</label><input id="materialUrl">
+ <div class="actions">${button("Dodaj materiał","addMaterial()")}</div>
+ </div>`:""}
+ <div class="grid3">
+ ${db.materials.map(m=>`<div class="card">
+ <h2>${esc(m.name)}</h2>
+ <a href="${esc(m.url)}" target="_blank" rel="noopener noreferrer">Otwórz dokument</a>
+ </div>`).join("")||'<div class="card">Brak dodanych materiałów.</div>'}
+ </div>`;
+}
+function addMaterial(){
+ if(!isAdmin())return;
+ const name=val("materialName").trim();
+ const url=val("materialUrl").trim();
+ if(!name||!/^https:\/\/[^ ]+/i.test(url)){
+  return alert("Podaj nazwę i prawidłowy adres HTTPS.");
+ }
+ db.materials.push({id:uid(),name,url});
+ save();render();
+}
+function tasks(){
+ return `<h1>Zadania</h1>
+ <div class="card">
+ <h2>Nowe zadanie</h2>
+ <label>Treść zadania</label><input id="taskText">
+ <label>Przypisz użytkownikowi</label>
+ <select id="taskOwner">
+ ${db.users.filter(u=>u.active&&(canManage()||u.id===current.id))
+ .map(u=>`<option value="${u.id}">${esc(u.name)}</option>`).join("")}
+ </select>
+ <div class="actions">${button("Dodaj zadanie","addTask()")}</div>
+ </div>
+ <div class="card"><h2>Lista zadań</h2>
+ ${db.tasks.filter(t=>canManage()||t.owner===current.id)
+ .map(t=>`<div class="message">
+ ${esc(t.text)} — ${t.done?"Wykonane":"Do wykonania"}
+ ${!t.done?button("Zakończ",`finishTask(${t.id})`,"light"):""}
+ </div>`).join("")||"<p>Brak zadań.</p>"}
+ </div>`;
+}
+function addTask(){
+ const text=val("taskText").trim();
+ if(!text)return;
+ const owner=Number(val("taskOwner"));
+ if(!canManage()&&owner!==current.id)return;
+ db.tasks.push({id:uid(),text,owner,done:false});
+ save();render();
+}
+function finishTask(id){
+ const t=db.tasks.find(x=>x.id===id);
+ if(!t||(!canManage()&&t.owner!==current.id))return;
+ t.done=true;save();render();
+}
+function users(){
+ if(!isAdmin())return "<h1>Brak dostępu</h1>";
+ return `<h1>Zarządzanie użytkownikami</h1>
+ <div class="card">
+ <h2>Dodaj konto</h2>
+ <div class="grid">
+ <div><label>Imię i nazwisko</label><input id="userName"></div>
+ <div><label>Login</label><input id="userLogin"></div>
+ <div><label>Hasło początkowe</label><input id="userPassword" type="password"></div>
+ <div><label>Rola</label><select id="userRole">
+ <option value="ph">Przedstawiciel handlowy</option>
+ <option value="office">Biuro</option>
+ <option value="admin">Administrator</option>
+ </select></div>
+ </div>
+ <div class="actions">${button("Utwórz konto","addUser()")}</div>
+ </div>
+ <div class="card tablewrap"><table>
+ <tr><th>Użytkownik</th><th>Login</th><th>Rola</th>
+ <th>Status</th><th>Akcje</th></tr>
+ ${db.users.map(u=>`<tr>
+ <td>${esc(u.name)}</td><td>${esc(u.login)}</td>
+ <td>${roleName(u.role)}</td>
+ <td>${u.active?"Aktywny":"Zablokowany"}</td>
+ <td>${u.id!==current.id?
+ button(u.active?"Zablokuj":"Aktywuj",`toggleUser(${u.id})`,"light"):"—"}</td>
+ </tr>`).join("")}
+ </table></div>`;
+}
+function addUser(){
+ if(!isAdmin())return;
+ const name=val("userName").trim();
+ const login=val("userLogin").trim();
+ const password=val("userPassword");
+ const role=val("userRole");
+ if(!name||!login||password.length<8)
+  return alert("Podaj nazwę, login i hasło minimum 8 znaków.");
+ if(db.users.some(u=>u.login===login))
+  return alert("Ten login już istnieje.");
+ db.users.push({id:uid(),name,login,password,role,active:true});
+ save();render();
+}
+function toggleUser(id){
+ if(!isAdmin()||id===current.id)return;
+ const u=db.users.find(x=>x.id===id);
+ if(u){u.active=!u.active;save();render()}
+}
+</script>
+</body>
+</html>
