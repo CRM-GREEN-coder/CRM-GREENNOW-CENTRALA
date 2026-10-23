@@ -6,329 +6,531 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GREEN NOW CRM</title>
 <style>
-:root{--green:#28543f;--gold:#cba85f;--bg:#f5f5f2}
-*{box-sizing:border-box}
-body{margin:0;font:15px Arial,sans-serif;background:var(--bg);color:#192720}
-header{background:#121815;color:white;padding:16px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
-header strong{color:#bce5cb;font-size:21px}
-nav{display:flex;gap:5px;flex-wrap:wrap}
-button{cursor:pointer;border:0;border-radius:8px;padding:11px 15px;font:inherit}
-nav button{background:transparent;color:white}
-nav button:hover,.active{background:var(--gold)!important;color:#111!important}
-main{max-width:1350px;margin:28px auto;padding:0 16px}
-.card{background:white;border:1px solid #e0e5df;border-radius:13px;padding:22px;margin-bottom:17px}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-label{display:block;font-weight:bold;margin:12px 0 5px}
-input,select,textarea{width:100%;padding:12px;border:1px solid #d4ddd5;border-radius:8px;font:inherit}
-textarea{min-height:85px}
-.primary{background:var(--green);color:white;font-weight:bold}
-.light{background:#e9f0ea;color:var(--green)}
-.danger{background:#a23e3e;color:white}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-table{width:100%;border-collapse:collapse}
-th,td{text-align:left;padding:12px;border-bottom:1px solid #e5e5e5}
-th{background:#f5f5f2}
-.scroll{overflow:auto}
-.muted{color:#68776d}
-.hidden{display:none!important}
-.alert{background:#fff1d6;border-left:5px solid #d17c20;padding:13px;margin:10px 0}
-.post{padding:15px;background:#f4f7f3;border-radius:9px;margin:10px 0}
-.login{max-width:430px;margin:10vh auto}
-iframe{width:100%;height:82vh;border:1px solid #ddd;border-radius:9px}
-@media(max-width:700px){.grid{grid-template-columns:1fr}}
+:root {
+  --green:#205841;
+  --dark:#121715;
+  --gold:#cba458;
+  --bg:#f5f5f2;
+  --border:#e2e6e1;
+}
+* {box-sizing:border-box}
+body {margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#17241e}
+button,input,select,textarea {font:inherit}
+button {cursor:pointer}
+header {
+  background:var(--dark);color:white;padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;flex-wrap:wrap
+}
+.logo {font-weight:800;font-size:21px;color:#a9ddbc}
+nav {display:flex;gap:7px;flex-wrap:wrap}
+nav button {
+  border:0;background:transparent;color:white;
+  padding:11px;border-radius:7px
+}
+nav button.active,nav button:hover {background:var(--gold);color:#111}
+main {max-width:1250px;margin:30px auto;padding:0 18px}
+h1 {font-size:25px;margin-bottom:5px}
+h2 {font-size:18px;margin:0 0 16px}
+p {color:#65746b}
+.card {
+  background:white;border:1px solid var(--border);
+  border-radius:13px;padding:22px;margin-bottom:16px;
+  box-shadow:0 2px 5px #00000008
+}
+.grid {display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.grid3 {display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+label {display:block;font-size:13px;font-weight:bold;margin:12px 0 6px}
+input,select,textarea {
+  width:100%;border:1px solid #d3dbd4;border-radius:8px;
+  padding:11px;background:white
+}
+.btn {
+  border:0;background:var(--green);color:white;
+  padding:11px 17px;border-radius:8px;font-weight:bold
+}
+.btn:hover {filter:brightness(1.12)}
+.btn.gold {background:var(--gold);color:#111}
+.btn.light {background:#e8eee9;color:var(--green)}
+.btn.red {background:#a43b3b}
+.actions {display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+table {width:100%;border-collapse:collapse;font-size:13px}
+th,td {padding:13px;text-align:left;border-bottom:1px solid var(--border)}
+th {background:#f5f6f3}
+.tablewrap {overflow-x:auto}
+.stat {font-size:26px;font-weight:800;color:var(--green)}
+.small {font-size:12px;color:#78877d}
+.badge {background:#e4f3e8;color:#17643b;border-radius:20px;padding:5px 9px;font-size:12px}
+.hidden {display:none!important}
+.login {
+  max-width:420px;margin:90px auto;background:white;
+  padding:35px;border-radius:18px;box-shadow:0 10px 35px #0001
+}
+.login h1 {text-align:center;color:var(--green)}
+.notice {background:#fff4d9;padding:12px;border-radius:8px;font-size:12px;margin-top:16px}
+.message {padding:10px;background:#e8f4ec;border-radius:8px;margin:10px 0}
+@media(max-width:700px){
+ .grid,.grid3 {grid-template-columns:1fr}
+ header {padding:12px}
+ nav {overflow:auto}
+ .card {padding:15px}
+}
 </style>
 </head>
 <body>
 
-<section id="loginScreen" class="login card">
-<h1>GREEN NOW CRM</h1>
-<p>Panel demonstracyjny</p>
-<label>Login</label>
-<input id="login" autocomplete="username">
-<label>Hasło</label>
-<input id="password" type="password">
-<p><button class="primary" onclick="signIn()">Zaloguj</button></p>
-<p class="muted">Konto testowe: admin / DemoAdmin123!</p>
-<p id="loginError"></p>
-</section>
+<div id="loginPage" class="login">
+  <h1>GREEN NOW CRM</h1>
+  <p style="text-align:center">Panel zarządzania OZE</p>
+  <label>Login</label>
+  <input id="login" placeholder="Wpisz login">
+  <label>Hasło</label>
+  <input id="password" type="password" placeholder="Wpisz hasło">
+  <div class="actions">
+    <button class="btn" style="width:100%" onclick="signIn()">Zaloguj się</button>
+  </div>
+  <p id="loginError" style="color:#b33"></p>
+  <div class="notice">
+    KONTA TESTOWE<br>
+    Administrator: admin / DemoAdmin123!<br>
+    PH: ph / DemoPH123!<br>
+    Biuro: biuro / DemoBiuro123!<br><br>
+    Wyłącznie demonstracja. Nie używaj prawdziwych danych.
+  </div>
+</div>
 
 <div id="app" class="hidden">
 <header>
-<strong>◇ GREEN NOW CRM</strong>
-<nav id="nav"></nav>
-<span id="who"></span>
-<button onclick="logout()">Wyloguj</button>
+  <div class="logo">◈ GREEN NOW CRM</div>
+  <nav id="navigation"></nav>
+  <div>
+    <span id="loggedUser"></span>
+    <button class="btn light" onclick="logout()">Wyloguj</button>
+  </div>
 </header>
 <main id="content"></main>
 </div>
 
 <script>
-const KEY="greennow_demo_v3";
-const initial={
- users:[
-  {id:1,name:"Administrator",login:"admin",password:"DemoAdmin123!",role:"admin",calc:"gn4",active:true},
-  {id:2,name:"Handlowiec testowy",login:"ph",password:"DemoPH123!",role:"ph",calc:"gn4",active:true},
-  {id:3,name:"Biuro testowe",login:"biuro",password:"DemoBiuro123!",role:"office",active:true}
- ],
- calculators:[
-  {id:"gn4",name:"GREEN NOW 4.0",file:"kalkulator-green-now-4.html",active:true}
- ],
- clients:[],tasks:[],offers:[],materials:[]
-};
-let db;
-try{db=JSON.parse(localStorage.getItem(KEY))||structuredClone(initial)}
-catch{db=structuredClone(initial)}
-for(const k of Object.keys(initial))if(!Array.isArray(db[k]))db[k]=[];
-let user=null,page="start",clientId=null,calcId=null;
-const $=id=>document.getElementById(id);
-const v=id=>$(id)?.value||"";
-const id=()=>crypto.randomUUID();
-const admin=()=>user?.role==="admin";
-const office=()=>user?.role==="office"||admin();
-const save=()=>localStorage.setItem(KEY,JSON.stringify(db));
-const money=n=>Number(n||0).toLocaleString("pl-PL",{style:"currency",currency:"PLN"});
-const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const own=c=>office()||c.owner===user.id;
-const findClient=()=>db.clients.find(c=>c.id===clientId&&own(c));
-const btn=(label,fn,cls="primary")=>`<button class="${cls}" onclick="${fn}">${label}</button>`;
+const KEY="greennow_crm_demo_v1";
 
+const defaults={
+ users:[
+  {id:1,name:"Administrator",login:"admin",password:"DemoAdmin123!",role:"admin",active:true},
+  {id:2,name:"Przedstawiciel handlowy",login:"ph",password:"DemoPH123!",role:"ph",active:true},
+  {id:3,name:"Pracownik biura",login:"biuro",password:"DemoBiuro123!",role:"office",active:true}
+ ],
+ offers:[],
+ clients:[],
+ materials:[],
+ tasks:[]
+};
+
+let db;
+try {
+ db=JSON.parse(localStorage.getItem(KEY))||defaults;
+} catch(e) {db=defaults}
+db.posts=db.posts||[];
+db.clients=db.clients||[];
+db.tasks=db.tasks||[];
+db.calculators=db.calculators||[{id:"gn4",name:"Kalkulator GREEN NOW 4.0",file:"kalkulator-green-now-4.html",active:true}];
+db.users.forEach(u=>{if(u.role==="ph"&&u.calculatorId===undefined)u.calculatorId="gn4"});
+let selectedClientId=null;
+let current=null;
+let page="dashboard";
+
+function save(){
+ localStorage.setItem(KEY,JSON.stringify(db));
+}
+function money(n){
+ return Number(n||0).toLocaleString("pl-PL",{
+  style:"currency",currency:"PLN"
+ });
+}
+function esc(v){
+ return String(v??"").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",
+  '"':"&quot;","'":"&#39;"
+ })[c]);
+}
+function byId(id){return document.getElementById(id)}
+function val(id){return byId(id)?.value||""}
+function uid(){return Date.now()+Math.floor(Math.random()*10000)}
+function isAdmin(){return current?.role==="admin"}
+function isOffice(){return current?.role==="office"}
+function canManage(){return isAdmin()||isOffice()}
+function own(items){
+ return isAdmin()||isOffice()
+ ?items:items.filter(x=>x.owner===current.id);
+}
+function roleName(r){
+ return ({admin:"Administrator",office:"Biuro",ph:"PH"})[r]||r;
+}
+function button(text,action,style=""){
+ return `<button class="btn ${style}" onclick="${action}">${text}</button>`;
+}
 function signIn(){
- user=db.users.find(u=>u.active&&u.login===v("login")&&u.password===v("password"));
- if(!user){$("loginError").textContent="Błędne dane";return}
- $("loginScreen").classList.add("hidden");
- $("app").classList.remove("hidden");
- go("start");
+ const u=db.users.find(x=>x.login===val("login")&&
+ x.password===val("password")&&x.active);
+ if(!u){
+  byId("loginError").textContent="Nieprawidłowy login lub hasło.";
+  return;
+ }
+ current=u;
+ byId("loginPage").classList.add("hidden");
+ byId("app").classList.remove("hidden");
+ page="dashboard";
+ render();
 }
 function logout(){
- user=null;$("app").classList.add("hidden");
- $("loginScreen").classList.remove("hidden");
+ current=null;
+ byId("app").classList.add("hidden");
+ byId("loginPage").classList.remove("hidden");
+ byId("password").value="";
 }
 function go(p){page=p;render()}
+function openClient(id){selectedClientId=id;go('clientDetail')}
+function clientAccess(c){return c&&(canManage()||c.owner===current.id)}
+function clientName(id){return db.clients.find(c=>c.id===id)?.name||'Nieprzypisany'}
 function render(){
- if(!user)return;
- $("who").textContent=user.name;
- const menu=[
- ["start","Start"],["calculator","Kalkulatory"],
- ["clients","Klienci"],["offers","Oferty"],
- ["tasks","Zadania"],["materials","Materiały"]
+ if(!current)return;
+ byId("loggedUser").textContent=current.name+" • "+roleName(current.role);
+ let menus=[
+  ["dashboard","Start"],
+  ["calculator","Kalkulator"],
+  ["offers","Oferty"],
+  ["clients","Klienci"],
+  ["commissions","Prowizje"],
+  ["materials","Materiały"],
+  ["tasks","Zadania"]
  ];
- if(office())menu.push(["verification","Weryfikacja"]);
- if(admin())menu.push(["adminCalculators","Admin: Kalkulatory"],["users","Użytkownicy"]);
- $("nav").innerHTML=menu.map(([p,n])=>`<button class="${page===p?"active":""}" onclick="go('${p}')">${n}</button>`).join("");
- const views={start,calculator,clients,clientDetail,offers,tasks,materials,verification,adminCalculators,users};
- $("content").innerHTML=(views[page]||start)();
+ if(canManage())menus.push(["approvals","Weryfikacja"]);
+ if(isAdmin())menus.push(["adminCalculators","Admin: Kalkulatory"],["users","Użytkownicy"]);
+ byId("navigation").innerHTML=menus.map(([id,name])=>
+ `<button class="${page===id?"active":""}" onclick="go('${id}')">${name}</button>`
+ ).join("");
+ const views={
+  dashboard:dashboard,
+  calculator:calculator,
+  offers:offers,
+  clients:clients,
+  commissions:commissions,
+  materials:materials,
+  tasks:tasks,
+  approvals:approvals,
+  users:users,
+  adminCalculators:adminCalculators
+ };
+ byId("content").innerHTML=(views[page]||dashboard)();
+ if(page==="calculator")calculate();
 }
-function start(){
- const cs=db.clients.filter(own);
- return `<h1>Pulpit GREEN NOW</h1>
- <div class="grid">
- <div class="card"><h2>Klienci</h2><h1>${cs.length}</h1></div>
- <div class="card"><h2>Moje zadania</h2><h1>${db.tasks.filter(t=>t.owner===user.id&&!t.done).length}</h1></div>
- </div>
- <div class="card">${btn("Klienci","go('clients')")} ${btn("Kalkulatory","go('calculator')","light")}</div>`;
-}
-function calculator(){
- const cs=db.calculators.filter(c=>c.active&&(office()||c.id===user.calc));
- if(!cs.length)return "<h2>Brak przypisanego kalkulatora</h2>";
- const selected=cs.find(c=>c.id===calcId)||cs[0];
- calcId=selected.id;
- return `<h1>Kalkulatory</h1>
- <div class="card"><div class="row">${cs.map(c=>btn(esc(c.name),`selectCalc('${c.id}')`,c.id===calcId?"primary":"light")).join("")}</div></div>
- <div class="card"><h2>${esc(selected.name)}</h2>
- <iframe src="${esc(selected.file)}" title="Kalkulator"></iframe>
- <p class="muted">Oryginalny kalkulator jest osobnym plikiem HTML. Zapis jego ofert nie jest jeszcze połączony z CRM.</p></div>`;
-}
-function selectCalc(x){calcId=x;render()}
 
-function clients(){
- return `<h1>Klienci</h1>
- <div class="card"><h2>Dodaj klienta</h2>
- <div class="grid">
- <div><label>Imię i nazwisko</label><input id="cn"></div>
- <div><label>Telefon</label><input id="ct"></div>
- <div><label>E-mail</label><input id="ce"></div>
- <div><label>Adres zamieszkania</label><input id="ca"></div>
- <div><label>Adres montażu</label><input id="cm"></div>
- <div><label>Zakres instalacji</label><input id="ci"></div>
+function dashboard(){
+ const o=own(db.offers);
+ const c=own(db.clients);
+ return `<h1>Strona główna</h1>
+ <p>Witaj, ${esc(current.name)}. Twój panel GREEN NOW.</p>
+ <div class="grid3">
+  <div class="card"><div class="small">Oferty</div><div class="stat">${o.length}</div></div>
+  <div class="card"><div class="small">Klienci</div><div class="stat">${c.length}</div></div>
+  <div class="card"><div class="small">Do zatwierdzenia</div><div class="stat">${o.filter(x=>x.status==="Do weryfikacji").length}</div></div>
  </div>
- <label>Finansowanie</label><select id="cf"><option>Nieustalone</option><option>Gotówka</option><option>Kredyt</option><option>Leasing</option><option>Dotacja</option></select>
- <p>${btn("Dodaj klienta","addClient()")}</p></div>
- <div class="card scroll"><table><tr><th>Klient</th><th>Instalacja</th><th>PH</th><th>Alert</th><th></th></tr>
- ${db.clients.filter(own).map(c=>`<tr>
- <td>${esc(c.name)}</td><td>${esc(c.type)}</td>
- <td>${esc(db.users.find(u=>u.id===c.owner)?.name)}</td>
- <td>${c.urgent?"❗ WAŻNE":"—"}</td>
- <td>${btn("Otwórz",`openClient('${c.id}')`)}</td>
- </tr>`).join("")}</table></div>`;
-}
-function addClient(){
- if(!v("cn").trim())return alert("Podaj nazwisko klienta");
- const c={id:id(),name:v("cn"),phone:v("ct"),email:v("ce"),
- address:v("ca"),mount:v("cm"),type:v("ci"),finance:v("cf"),
- owner:user.id,posts:[],docs:{},extra:"",urgent:false,status:"Nowy"};
- db.clients.push(c);save();openClient(c.id);
-}
-function openClient(x){clientId=x;go("clientDetail")}
-const required=["Oferta","Umowa","Załączniki","Załącznik do OSD","Załącznik do dotacji"];
-function clientDetail(){
- const c=findClient();
- if(!c)return "<h2>Brak dostępu</h2>";
- const ts=db.tasks.filter(t=>t.clientId===c.id);
- return `<div class="row"><h1>${esc(c.name)}</h1>${c.urgent?'<strong style="color:#b33">❗ WAŻNE</strong>':""}</div>
- <p>${btn("Wróć do klientów","go('clients')","light")}</p>
- <div class="grid">
- <div class="card"><h2>Dane klienta</h2>
- <p>Telefon: ${esc(c.phone)}</p><p>E-mail: ${esc(c.email)}</p>
- <p>Adres zamieszkania: ${esc(c.address)}</p>
- <p>Adres montażu: ${esc(c.mount)}</p>
- <p>Instalacja: ${esc(c.type)}</p>
- <p>Finansowanie: ${esc(c.finance)}</p>
- <p>Opiekun: ${esc(db.users.find(u=>u.id===c.owner)?.name)}</p>
- </div>
- <div class="card"><h2>Dokumenty do weryfikacji</h2>
- ${required.map((d,i)=>`<label><input style="width:auto" type="checkbox" ${c.docs?.[i]?"checked":""} onchange="setDoc(${i},this.checked)"> ${d}</label>`).join("")}
- <p class="muted">Statusy dokumentów — wersja demonstracyjna. Przesyłanie skanów wymaga magazynu plików.</p></div>
- </div>
- <div class="card"><h2>Dodatkowe informacje od PH</h2>
- <textarea id="extra">${esc(c.extra)}</textarea>
- <label><input style="width:auto" type="checkbox" id="urgent" ${c.urgent?"checked":""}> ❗ Bardzo ważne — pokaż alert przy kliencie</label>
- <p>${btn("Zapisz informacje","saveExtra()")}</p></div>
- ${office()?`<div class="card"><h2>Wewnętrzna tablica biura</h2>
- <textarea id="post" placeholder="Nowy wpis, aktualizacja, notatka..."></textarea>
- <p>${btn("Dodaj wpis","addPost()")}</p>
- ${(c.posts||[]).slice().reverse().map(p=>`<div class="post"><strong>${esc(p.author)}</strong> · ${esc(p.date)}<p>${esc(p.text)}</p></div>`).join("")}
- </div>`:""}
- <div class="card"><h2>Zadania klienta</h2>
- ${office()?`<label>Treść zadania</label><textarea id="taskText"></textarea>
- <label>Przypisz pracownikowi</label><select id="taskOwner">${db.users.filter(u=>u.active).map(u=>`<option value="${u.id}">${esc(u.name)}</option>`).join("")}</select>
- <label>Termin</label><input id="taskDate" type="date">
- <p>${btn("Dodaj zadanie","addClientTask()")}</p>`:""}
- ${ts.filter(t=>office()||t.owner===user.id).map(t=>`<div class="post">${esc(t.text)} — ${t.done?"Wykonane":"Do wykonania"} (${esc(t.date)}) ${!t.done?btn("Zakończ",`finishTask('${t.id}')`,"light"):""}</div>`).join("")}
+ <div class="card">
+  <h2>Szybkie działania</h2>
+  <div class="actions">
+   ${button("Nowa wycena","go('calculator')")}
+   ${button("Klienci","go('clients')","light")}
+   ${button("Moje oferty","go('offers')","light")}
+  </div>
  </div>`;
 }
-function setDoc(i,checked){
- if(!office())return;
- const c=findClient();if(!c)return;
- c.docs[i]=checked;save();
+
+function calculator(){
+ const available=db.calculators.filter(c=>c.active&&(canManage()||current.calculatorId===c.id));
+ const chosen=available.find(c=>c.id===selectedCalculatorId)||available[0];
+ if(!chosen)return `<h1>Kalkulatory</h1><div class="card">Nie przypisano Ci aktywnego kalkulatora. Skontaktuj się z administratorem.</div>`;
+ selectedCalculatorId=chosen.id;
+ const file=allowedCalcFile(chosen.file);
+ return `<h1>Kalkulatory</h1><p>Twój przypisany kalkulator i jego własny cennik.</p>
+ ${available.length>1?`<div class="card"><label>Wybierz kalkulator</label><select onchange="selectCalculator(this.value)">${available.map(c=>`<option value="${esc(c.id)}" ${c.id===chosen.id?'selected':''}>${esc(c.name)}</option>`).join('')}</select></div>`:''}
+ <div class="card"><h2>${esc(chosen.name)}</h2>${file?`<iframe title="${esc(chosen.name)}" src="${esc(file)}" style="width:100%;height:82vh;border:1px solid #ddd;border-radius:8px;background:white"></iframe><p class="small"><a href="${esc(file)}" target="_blank" rel="noopener">Otwórz w nowej karcie</a></p>`:'Nieprawidłowy plik kalkulatora.'}</div>`;
 }
-function saveExtra(){
- const c=findClient();if(!c)return;
- c.extra=v("extra");c.urgent=$("urgent").checked;
- save();render();
+let selectedCalculatorId="gn4";
+function selectCalculator(id){selectedCalculatorId=id;render()}
+function allowedCalcFile(f){if(/^[a-zA-Z0-9_-]+\.html$/.test(f||''))return f;try{const u=new URL(f);return u.protocol==='https:'?u.href:null}catch(e){return null}}
+function calculate(){
+ const base=Math.max(0,Number(val("calcBase"))||0);
+ const pct=Math.max(0,Number(val("calcMargin"))||0);
+ const vat=Number(val("calcVat"))||8;
+ const margin=base*pct/100;
+ const net=base+margin;
+ byId("resultBase").textContent=money(base);
+ byId("resultMargin").textContent=money(margin);
+ byId("resultNet").textContent=money(net);
+ byId("resultGross").textContent=money(net*(1+vat/100));
 }
-function addPost(){
- if(!office())return;
- const c=findClient();if(!c||!v("post").trim())return;
- c.posts.push({text:v("post"),author:user.name,date:new Date().toLocaleString("pl-PL")});
- save();render();
-}
-function addClientTask(){
- if(!office()||!v("taskText").trim())return;
- db.tasks.push({id:id(),clientId:clientId,text:v("taskText"),owner:Number(v("taskOwner")),date:v("taskDate"),done:false});
- save();render();
-}
-function finishTask(x){
- const t=db.tasks.find(t=>t.id===x);
- if(!t||(!office()&&t.owner!==user.id))return;
- t.done=true;save();render();
-}
-function tasks(){
- return `<h1>Zadania</h1><div class="card">
- ${db.tasks.filter(t=>office()||t.owner===user.id).map(t=>{
- const c=db.clients.find(c=>c.id===t.clientId);
- return `<div class="post">${esc(t.text)} — ${esc(c?.name)}
- ${btn("Otwórz klienta",`openClient('${t.clientId}')`,"light")}</div>`;
- }).join("")||"Brak zadań"}</div>`;
+function saveOffer(){
+ const client=val("calcClient").trim();
+ if(!client){alert("Wpisz imię i nazwisko klienta.");return}
+ const base=Math.max(0,Number(val("calcBase"))||0);
+ const pct=Math.max(0,Number(val("calcMargin"))||0);
+ const vat=Number(val("calcVat"));
+ const margin=base*pct/100;
+ const net=base+margin;
+ const id=uid();
+ db.offers.push({
+  id,client,owner:current.id,
+  type:val("calcType"),base,pct,margin,net,vat,
+  gross:net*(1+vat/100),
+  notes:val("calcNotes"),status:"Robocza",
+  commission:0,commissionStatus:"Nieustalona",
+  date:new Date().toLocaleDateString("pl-PL")
+ });
+ db.clients.push({
+  id:uid(),name:client,owner:current.id,
+  type:val("calcType"),status:"Oferta",
+  notes:"",offerId:id
+ });
+ save();go("offers");
 }
 function offers(){
- return `<h1>Oferty</h1><div class="card">
- <p>Oferty z kalkulatora GREEN NOW 4.0 wymagają integracji z bazą CRM.</p>
- ${btn("Otwórz kalkulatory","go('calculator')")}
- </div>`;
+ const rows=own(db.offers);
+ return `<h1>Historia ofert</h1>
+ <p>Wyceny zapisane w systemie.</p>
+ <div class="card tablewrap">
+ <table><thead><tr>
+ <th>Klient</th><th>Instalacja</th><th>Cena netto</th>
+ <th>Marża netto</th><th>Status</th><th>Akcje</th>
+ </tr></thead><tbody>
+ ${rows.map(o=>`<tr>
+ <td>${esc(o.client)}</td>
+ <td>${esc(o.type)}</td>
+ <td>${money(o.net)}</td>
+ <td>${money(o.margin)}</td>
+ <td><span class="badge">${esc(o.status)}</span></td>
+ <td>${o.status==="Robocza"?
+ button("Przekaż do biura",`sendOffer(${o.id})`):"—"}</td>
+ </tr>`).join("")||'<tr><td colspan="6">Brak ofert.</td></tr>'}
+ </tbody></table></div>`;
 }
-function verification(){
- if(!office())return "<h2>Brak dostępu</h2>";
- return `<h1>Weryfikacja</h1><div class="card scroll">
- <table><tr><th>Klient</th><th>Dokumenty</th><th>Ważne</th><th>Akcje</th></tr>
- ${db.clients.map(c=>`<tr><td>${esc(c.name)}</td>
- <td>${required.filter((_,i)=>c.docs?.[i]).length}/5</td>
- <td>${c.urgent?"❗":"—"}</td>
- <td>${btn("Otwórz",`openClient('${c.id}')`)}</td></tr>`).join("")}
+function sendOffer(id){
+ const o=db.offers.find(x=>x.id===id);
+ if(!o||(!canManage()&&o.owner!==current.id))return;
+ o.status="Do weryfikacji";save();render();
+}
+function approvals(){
+ if(!canManage())return "<h1>Brak dostępu</h1>";
+ const rows=db.offers.filter(x=>x.status==="Do weryfikacji");
+ return `<h1>Skrzynka umów i ofert</h1>
+ <p>Oferty przekazane przez PH do weryfikacji.</p>
+ <div class="card tablewrap"><table>
+ <tr><th>Klient</th><th>PH</th><th>Wartość netto</th><th>Akcje</th></tr>
+ ${rows.map(o=>`<tr>
+ <td>${esc(o.client)}</td>
+ <td>${esc(db.users.find(u=>u.id===o.owner)?.name)}</td>
+ <td>${money(o.net)}</td>
+ <td>
+ ${button("Zatwierdź",`approve(${o.id},true)`)}
+ ${button("Odrzuć",`approve(${o.id},false)`,"red")}
+ </td></tr>`).join("")||'<tr><td colspan="4">Brak ofert do weryfikacji.</td></tr>'}
  </table></div>`;
 }
+function approve(id,accepted){
+ if(!canManage())return;
+ const o=db.offers.find(x=>x.id===id);
+ if(!o)return;
+ o.status=accepted?"Zaakceptowana":"Odrzucona";
+ save();render();
+}
+function clients(){
+ return `<h1>Klienci</h1><p>Kliknij klienta, aby otworzyć jego tablicę.</p>
+ <div class="card"><h2>Dodaj klienta</h2><div class="grid">
+ <div><label>Imię i nazwisko</label><input id="newClient"></div>
+ <div><label>Zakres montażu</label><input id="newType"></div></div>
+ <label>Notatki</label><textarea id="newNotes"></textarea>
+ <div class="actions">${button('Dodaj klienta','addClient()')}</div></div>
+ <div class="card tablewrap"><table><tr><th>Klient</th><th>Zakres</th><th>Etap</th><th>PH</th><th></th></tr>
+ ${own(db.clients).map(c=>`<tr><td><button class="btn light" onclick="openClient(${Number(c.id)})">${esc(c.name)}</button></td>
+ <td>${esc(c.type)}</td><td>${esc(c.status)}</td><td>${esc(db.users.find(u=>u.id===c.owner)?.name)}</td>
+ <td>${button('Otwórz tablicę',`openClient(${Number(c.id)})`)}</td></tr>`).join('')||'<tr><td colspan="5">Brak klientów.</td></tr>'}</table></div>`;
+}
+function addClient(){
+ const name=val('newClient').trim();if(!name)return alert('Podaj imię i nazwisko.');
+ const id=uid();db.clients.push({id,name,owner:current.id,type:val('newType'),notes:val('newNotes'),status:'Nowy'});
+ save();openClient(id);
+}
+function clientDetail(){
+ const c=db.clients.find(x=>x.id===selectedClientId);
+ if(!clientAccess(c))return `<h1>Brak dostępu do klienta</h1>${button('Wróć',"go('clients')")}`;
+ const posts=db.posts.filter(p=>p.clientId===c.id).sort((a,b)=>b.id-a.id);
+ const tasks=db.tasks.filter(t=>t.clientId===c.id);
+ const offers=db.offers.filter(o=>o.clientId===c.id||o.offerId===c.offerId||(o.client===c.name&&o.owner===c.owner));
+ return `<div class="actions">${button('← Lista klientów',"go('clients')",'light')}</div>
+ <h1>${esc(c.name)}</h1><p>Opiekun: ${esc(db.users.find(u=>u.id===c.owner)?.name||'—')} • ${esc(c.type||'Bez zakresu')}</p>
+ <div class="grid"><div class="card"><h2>Dane klienta</h2><label>Status</label>
+ <select id="clientStatus"><option>${esc(c.status)}</option>${['Nowy','Kontakt','Oferta','Umowa','Realizacja','Zakończony','Utracony'].filter(x=>x!==c.status).map(x=>`<option>${x}</option>`).join('')}</select>
+ <label>Zakres</label><input id="clientType" value="${esc(c.type||'')}">
+ <label>Notatka główna</label><textarea id="clientNotes">${esc(c.notes||'')}</textarea>
+ <div class="actions">${button('Zapisz dane','saveClientDetails()')}</div></div>
+ <div class="card"><h2>Nowy wpis na tablicy</h2><label>Treść wpisu</label><textarea id="postText" rows="4" placeholder="Rozmowa, ustalenia, ważne informacje..."></textarea>
+ <label>Zdjęcie lub dokument (wersja demo: do 1 MB)</label><input id="postFile" type="file" accept="image/*,.pdf,.txt">
+ <div class="actions">${button('Dodaj wpis','addClientPost()')}</div>
+ <div class="notice">Załączniki demo przechowywane lokalnie w tej przeglądarce. Nie dodawaj prawdziwych umów ani danych osobowych.</div></div></div>
+ <div class="grid"><div class="card"><h2>Zadania klienta</h2><label>Zadanie</label><input id="clientTaskText" placeholder="Np. Zadzwonić w sprawie umowy">
+ <label>Termin</label><input id="clientTaskDate" type="date"><label>Przypisz do</label>
+ <select id="clientTaskOwner">${db.users.filter(u=>u.active&&(canManage()||u.id===current.id)).map(u=>`<option value="${u.id}">${esc(u.name)}</option>`).join('')}</select>
+ <div class="actions">${button('Dodaj zadanie','addClientTask()')}</div>
+ ${tasks.map(t=>`<div class="message"><b>${esc(t.text)}</b><div class="small">${esc(t.due||'Bez terminu')} • ${esc(db.users.find(u=>u.id===t.owner)?.name||'—')} • ${t.done?'Wykonane':'Do wykonania'}</div>${!t.done&&(canManage()||t.owner===current.id)?button('Zakończ',`finishTask(${t.id})`,'light'):''}</div>`).join('')||'<p>Brak zadań.</p>'}</div>
+ <div class="card"><h2>Oferty klienta</h2>${offers.map(o=>`<div class="message">${esc(o.type)} — ${money(o.net)} • ${esc(o.status)}</div>`).join('')||'<p>Brak ofert przypisanych do klienta.</p>'}
+ <p class="small">Kalkulator 4.0 działa w osobnej zakładce. Automatyczne powiązanie jego ofert wymaga integracji zapisu.</p></div></div>
+ <div class="card"><h2>Tablica / historia klienta</h2>${posts.map(p=>`<div class="message"><div class="small">${esc(p.date)} • ${esc(db.users.find(u=>u.id===p.author)?.name||'Użytkownik')}</div>
+ <p style="white-space:pre-wrap;color:#17241e">${esc(p.text)}</p>${p.fileData?`<a href="${p.fileData}" download="${esc(p.fileName||'zalacznik')}">📎 ${esc(p.fileName)}</a>`:''}</div>`).join('')||'<p>Brak wpisów na tablicy.</p>'}</div>`;
+}
+function saveClientDetails(){const c=db.clients.find(x=>x.id===selectedClientId);if(!clientAccess(c))return;
+ c.status=val('clientStatus');c.type=val('clientType');c.notes=val('clientNotes');save();render();}
+function addClientPost(){const c=db.clients.find(x=>x.id===selectedClientId);if(!clientAccess(c))return;
+ const content=val('postText').trim(),file=byId('postFile').files[0];if(!content&&!file)return alert('Dodaj treść lub plik.');
+ if(file&&file.size>1024*1024)return alert('Wersja demo: maksymalnie 1 MB.');
+ if(file&&!(/^(image\/|application\/pdf$|text\/plain$)/.test(file.type)))return alert('Dozwolone zdjęcia, PDF i TXT.');
+ const record={id:uid(),clientId:c.id,author:current.id,date:new Date().toLocaleString('pl-PL'),text:content};
+ const finish=()=>{db.posts.push(record);try{save();render()}catch(e){db.posts.pop();alert('Brak miejsca w pamięci przeglądarki.')}};
+ if(file){const reader=new FileReader();reader.onload=()=>{record.fileData=reader.result;record.fileName=file.name;finish()};reader.readAsDataURL(file)}else finish();
+}
+function addClientTask(){const c=db.clients.find(x=>x.id===selectedClientId);if(!clientAccess(c))return;
+ const text=val('clientTaskText').trim(),owner=Number(val('clientTaskOwner'));if(!text)return alert('Podaj zadanie.');
+ if(!canManage()&&owner!==current.id)return;
+ db.tasks.push({id:uid(),clientId:c.id,text,owner,due:val('clientTaskDate'),done:false});save();render();}
+function commissions(){
+ return `<h1>Prowizje i rozliczenia</h1>
+ <p>Marża handlowa i prowizja wypłacana to oddzielne wartości.</p>
+ <div class="card tablewrap"><table>
+ <tr><th>Klient</th><th>Marża netto</th><th>Prowizja PH</th>
+ <th>Status</th><th>Akcje</th></tr>
+ ${own(db.offers).map(o=>`<tr>
+ <td>${esc(o.client)}</td>
+ <td>${money(o.margin)}</td>
+ <td>${money(o.commission)}</td>
+ <td>${esc(o.commissionStatus)}</td>
+ <td>${isAdmin()?button("Ustal prowizję",`setCommission(${o.id})`):"—"}</td>
+ </tr>`).join("")||'<tr><td colspan="5">Brak rozliczeń.</td></tr>'}
+ </table></div>`;
+}
+function setCommission(id){
+ if(!isAdmin())return;
+ const o=db.offers.find(x=>x.id===id);
+ if(!o)return;
+ const amount=prompt("Kwota prowizji PH netto (zł):",o.commission);
+ if(amount===null)return;
+ const n=Number(amount.replace(",","."));
+ if(!Number.isFinite(n)||n<0)return alert("Nieprawidłowa kwota.");
+ o.commission=n;
+ const status=prompt(
+  "Status: Oczekująca / FV otrzymana / Wypłacona",
+  o.commissionStatus==="Nieustalona"?"Oczekująca":o.commissionStatus
+ );
+ if(status!==null&&["Oczekująca","FV otrzymana","Wypłacona"].includes(status)){
+  o.commissionStatus=status;
+ }
+ save();render();
+}
 function materials(){
- return `<h1>Materiały</h1><div class="card">
- <p>Foldery, pliki PDF i kontrola dostępu wymagają podłączenia magazynu plików.</p>
+ return `<h1>Materiały do pobrania</h1>
+ ${isAdmin()?`<div class="card">
+ <h2>Dodaj materiał</h2>
+ <label>Nazwa dokumentu</label><input id="materialName">
+ <label>Link do dokumentu (HTTPS)</label><input id="materialUrl">
+ <div class="actions">${button("Dodaj materiał","addMaterial()")}</div>
+ </div>`:""}
+ <div class="grid3">
+ ${db.materials.map(m=>`<div class="card">
+ <h2>${esc(m.name)}</h2>
+ <a href="${esc(m.url)}" target="_blank" rel="noopener noreferrer">Otwórz dokument</a>
+ </div>`).join("")||'<div class="card">Brak dodanych materiałów.</div>'}
  </div>`;
+}
+function addMaterial(){
+ if(!isAdmin())return;
+ const name=val("materialName").trim();
+ const url=val("materialUrl").trim();
+ if(!name||!/^https:\/\/[^ ]+/i.test(url)){
+  return alert("Podaj nazwę i prawidłowy adres HTTPS.");
+ }
+ db.materials.push({id:uid(),name,url});
+ save();render();
+}
+function tasks(){
+ const visible=db.tasks.filter(t=>canManage()||t.owner===current.id);
+ return `<h1>Zadania</h1><p>Zadania tworzy się na tablicy konkretnego klienta.</p>
+ <div class="card">${button('Przejdź do klientów',"go('clients')")}</div>
+ <div class="card"><h2>Lista zadań</h2>${visible.map(t=>`<div class="message"><b>${esc(t.text)}</b> — ${t.done?'Wykonane':'Do wykonania'}
+ <div class="small">Klient: ${esc(clientName(t.clientId))} • Termin: ${esc(t.due||'Brak')}</div>
+ ${t.clientId&&db.clients.some(c=>c.id===t.clientId&&clientAccess(c))?button('Otwórz klienta',`openClient(${t.clientId})`,'light'):''}
+ ${!t.done&&(canManage()||t.owner===current.id)?button('Zakończ',`finishTask(${t.id})`,'light'):''}</div>`).join('')||'<p>Brak zadań.</p>'}</div>`;
+}
+function finishTask(id){
+ const t=db.tasks.find(x=>x.id===id);
+ if(!t||(!canManage()&&t.owner!==current.id))return;
+ t.done=true;save();render();
 }
 function adminCalculators(){
- if(!admin())return "<h2>Brak dostępu</h2>";
- return `<h1>Admin / Kalkulatory</h1>
- ${db.calculators.map(c=>{
- const us=db.users.filter(u=>u.role==="ph"&&u.calc===c.id);
- return `<div class="card"><h2>${esc(c.name)}</h2>
- <p>Przypisanych PH: <b>${us.length}</b> · Aktywnych: ${us.filter(u=>u.active).length}</p>
- <p>${us.map(u=>esc(u.name)).join(", ")||"Brak przypisanych"}</p>
- <p>Plik: ${esc(c.file)}</p>
- ${btn("Edytuj",`editCalc('${c.id}')`,"light")}
- ${btn(c.active?"Wyłącz":"Włącz",`toggleCalc('${c.id}')`,"light")}
- </div>`;
- }).join("")}
- <div class="card"><h2>Dodaj kalkulator / grupę</h2>
- <label>Nazwa kalkulatora</label><input id="newCalcName">
- <label>Nazwa pliku HTML</label><input id="newCalcFile" placeholder="kalkulator-partner.html">
- <p>${btn("Dodaj kalkulator","addCalc()")}</p></div>`;
+ if(!isAdmin())return '<h1>Brak dostępu</h1>';
+ return `<h1>Admin / Kalkulatory</h1><p>Każdy kalkulator jest jednocześnie grupą PH i ma własny plik oraz cennik.</p>
+ <div class="grid3">${db.calculators.map(c=>{const assigned=db.users.filter(u=>u.role==='ph'&&u.calculatorId===c.id);return `<div class="card"><h2>${esc(c.name)}</h2><div class="stat">${assigned.length}</div><p>Przypisanych PH (${assigned.filter(u=>u.active).length} aktywnych)</p><p class="small">${assigned.map(u=>esc(u.name)).join(', ')||'Brak przypisanych'}</p><span class="badge">${c.active?'Aktywny':'Wyłączony'}</span><div class="actions">${button('Szczegóły',`editCalculator('${c.id}')`,'light')}${button(c.active?'Wyłącz':'Włącz',`toggleCalculator('${c.id}')`,'light')}</div></div>`}).join('')}</div>
+ <div class="card"><h2>Dodaj kalkulator / grupę</h2><div class="grid"><div><label>Nazwa kalkulatora (nazwa grupy)</label><input id="newCalcName" placeholder="Np. Kalkulator Partner A"></div><div><label>Adres HTTPS kalkulatora lub plik HTML</label><input id="newCalcFile" placeholder="https://green-now.github.io/PV-K4.0/"></div></div><p class="small">Wpisz pełny adres HTTPS kalkulatora albo nazwę pliku HTML dodanego do repozytorium. Link publiczny nie zabezpiecza cennika przed osobami spoza CRM.</p><div class="actions">${button('Dodaj kalkulator', 'addCalculator()')}</div></div>
+ <div class="card"><h2>Przypisanie PH do kalkulatorów</h2><div class="tablewrap"><table><tr><th>Handlowiec</th><th>Login</th><th>Przypisany kalkulator</th><th>Status</th></tr>${db.users.filter(u=>u.role==='ph').map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.login)}</td><td><select onchange="assignCalculator(${u.id},this.value)">${db.calculators.map(c=>`<option value="${esc(c.id)}" ${u.calculatorId===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}</select></td><td>${u.active?'Aktywny':'Zablokowany'}</td></tr>`).join('')}</table></div></div>`;
 }
-function validFile(f){return /^[a-zA-Z0-9_-]+\.html$/.test(f)}
-function addCalc(){
- if(!admin())return;
- const name=v("newCalcName").trim(),file=v("newCalcFile").trim();
- if(!name||!validFile(file))return alert("Podaj nazwę i poprawną nazwę pliku HTML");
- db.calculators.push({id:id(),name,file,active:true});
- save();render();
-}
-function editCalc(x){
- if(!admin())return;
- const c=db.calculators.find(c=>c.id===x);
- const name=prompt("Nazwa kalkulatora",c.name);
- if(name===null)return;
- const file=prompt("Plik HTML",c.file);
- if(file===null)return;
- if(!name.trim()||!validFile(file))return alert("Niepoprawne dane");
- c.name=name.trim();c.file=file;save();render();
-}
-function toggleCalc(x){
- if(!admin())return;
- const c=db.calculators.find(c=>c.id===x);
- c.active=!c.active;save();render();
-}
+function addCalculator(){if(!isAdmin())return;const name=val('newCalcName').trim(),file=val('newCalcFile').trim();if(!name||!allowedCalcFile(file))return alert('Wpisz nazwę i poprawny adres HTTPS lub nazwę pliku HTML');db.calculators.push({id:'calc'+uid(),name,file,active:true});save();render()}
+function editCalculator(id){if(!isAdmin())return;const c=db.calculators.find(x=>x.id===id);if(!c)return;const name=prompt('Nazwa kalkulatora / grupy:',c.name);if(name===null)return;const file=prompt('Adres HTTPS lub nazwa pliku HTML kalkulatora:',c.file);if(file===null)return;if(!name.trim()||!allowedCalcFile(file.trim()))return alert('Nieprawidłowe dane.');c.name=name.trim();c.file=file.trim();save();render()}
+function toggleCalculator(id){if(!isAdmin())return;const c=db.calculators.find(x=>x.id===id);if(c){c.active=!c.active;save();render()}}
+function assignCalculator(userId,calcId){if(!isAdmin()||!db.calculators.some(c=>c.id===calcId))return;const u=db.users.find(u=>u.id===userId&&u.role==='ph');if(u){u.calculatorId=calcId;save();render()}}
 function users(){
- if(!admin())return "<h2>Brak dostępu</h2>";
- return `<h1>Użytkownicy</h1>
- <div class="card"><h2>Dodaj użytkownika</h2>
- <label>Imię i nazwisko</label><input id="un">
- <label>Login</label><input id="ul">
- <label>Hasło</label><input id="up" type="password">
- <label>Rola</label><select id="ur"><option value="ph">PH</option><option value="office">Biuro</option><option value="admin">Administrator</option></select>
- <label>Kalkulator / grupa</label><select id="uc">${db.calculators.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("")}</select>
- <p>${btn("Utwórz użytkownika","addUser()")}</p></div>
- <div class="card scroll"><table><tr><th>Użytkownik</th><th>Rola</th><th>Kalkulator</th><th>Status</th></tr>
- ${db.users.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.role)}</td>
- <td><select onchange="assignCalc(${u.id},this.value)">
- ${db.calculators.map(c=>`<option value="${c.id}" ${u.calc===c.id?"selected":""}>${esc(c.name)}</option>`).join("")}</select></td>
- <td>${u.active?"Aktywny":"Zablokowany"}</td></tr>`).join("")}</table></div>`;
+ if(!isAdmin())return "<h1>Brak dostępu</h1>";
+ return `<h1>Zarządzanie użytkownikami</h1>
+ <div class="card">
+ <h2>Dodaj konto</h2>
+ <div class="grid">
+ <div><label>Imię i nazwisko</label><input id="userName"></div>
+ <div><label>Login</label><input id="userLogin"></div>
+ <div><label>Hasło początkowe</label><input id="userPassword" type="password"></div>
+ <div><label>Rola</label><select id="userRole">
+ <option value="ph">Przedstawiciel handlowy</option>
+ <option value="office">Biuro</option>
+ <option value="admin">Administrator</option>
+ </select></div>
+ <div><label>Kalkulator / grupa PH</label><select id="userCalculator">${db.calculators.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join("")}</select></div>
+ </div>
+ <div class="actions">${button("Utwórz konto","addUser()")}</div>
+ </div>
+ <div class="card tablewrap"><table>
+ <tr><th>Użytkownik</th><th>Login</th><th>Rola</th>
+ <th>Kalkulator / grupa</th><th>Status</th><th>Akcje</th></tr>
+ ${db.users.map(u=>`<tr>
+ <td>${esc(u.name)}</td><td>${esc(u.login)}</td>
+ <td>${roleName(u.role)}</td>
+ <td>${esc(db.calculators.find(c=>c.id===u.calculatorId)?.name||"—")}</td>
+ <td>${u.active?"Aktywny":"Zablokowany"}</td>
+ <td>${u.id!==current.id?
+ button(u.active?"Zablokuj":"Aktywuj",`toggleUser(${u.id})`,"light"):"—"}</td>
+ </tr>`).join("")}
+ </table></div>`;
 }
 function addUser(){
- if(!admin())return;
- if(!v("un")||!v("ul")||v("up").length<8)return alert("Uzupełnij dane. Hasło minimum 8 znaków.");
- if(db.users.some(u=>u.login===v("ul")))return alert("Login zajęty");
- db.users.push({id:Date.now(),name:v("un"),login:v("ul"),password:v("up"),role:v("ur"),calc:v("uc"),active:true});
+ if(!isAdmin())return;
+ const name=val("userName").trim();
+ const login=val("userLogin").trim();
+ const password=val("userPassword");
+ const role=val("userRole");
+ if(!name||!login||password.length<8)
+  return alert("Podaj nazwę, login i hasło minimum 8 znaków.");
+ if(db.users.some(u=>u.login===login))
+  return alert("Ten login już istnieje.");
+ db.users.push({id:uid(),name,login,password,role,calculatorId:role==="ph"?val("userCalculator"):null,active:true});
  save();render();
 }
-function assignCalc(x,c){
- if(!admin())return;
- const u=db.users.find(u=>u.id===x);
- if(u){u.calc=c;save();render()}
+function toggleUser(id){
+ if(!isAdmin()||id===current.id)return;
+ const u=db.users.find(x=>x.id===id);
+ if(u){u.active=!u.active;save();render()}
 }
 </script>
 </body>
